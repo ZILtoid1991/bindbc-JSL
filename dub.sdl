@@ -1,0 +1,35 @@
+name "bindbc-jsl"
+description "JoyShockLibrary binding for D."
+authors "laszl"
+copyright "Copyright © 2020, laszl"
+license "Boost"
+
+sourcePaths "source/"
+targetType "staticLibrary"
+targetPath "lib"
+targetName "BindBC-jsl"
+
+configuration "dynamic" {
+    dependency "bindbc-loader" version="~>0.1.0"
+}
+
+configuration "dynamicBC" {
+    dependency "bindbc-loader" version="~>0.1.0"
+    subConfiguration "bindbc-loader" "yesBC"
+}
+
+configuration "static" {
+    versions "BindJSL_Static"
+}
+
+configuration "staticBC" {
+    dflags "-betterC"
+    versions "BindJSL_Static"
+    excludedSourceFiles "source/bindbc/jsl/dynload.d"
+}
+
+buildType "unittest" {
+    buildOptions "unittests" "debugMode" "debugInfo"
+    sourceFiles "test.d"
+    sourcePaths "source/"
+}
