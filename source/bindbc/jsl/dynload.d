@@ -12,6 +12,7 @@ version(BindJSL_Static) {
 		noLibrary,
 		badLibrary,
 		loadedV1_1,
+		loadedV2_0,
 	}
 	private {
 		SharedLib lib;
@@ -79,6 +80,11 @@ version(BindJSL_Static) {
 		lib.bindSymbol(cast(void**)&JslSetPlayerNumber, "JslSetPlayerNumber");
 		if(errCnt != errorCount()) loadedVersion = JSLSupport.badLibrary;
 		else loadedVersion = JSLSupport.loadedV1_1;
+		version(JSLV2_0) {
+			lib.bindSymbol(cast(void**)&JslGetMotionState, "JslGetMotionState");
+			lib.bindSymbol(cast(void**)&JslGetTouchState, "JslGetTouchState");
+			if(errCnt == errorCount()) loadedVersion = JSLSupport.loadedV2_0;
+		}
 		return loadedVersion;
 	}
 }

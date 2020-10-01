@@ -104,13 +104,42 @@ struct IMU_STATE {
 	float gyroY;
 	float gyroZ;
 }
+version(JSLV2_0) {
+	struct MOTION_STATE {
+		float quatW;
+		float quatX;
+		float quatY;
+		float quatZ;
+		float accelX;
+		float accelY;
+		float accelZ;
+		float gravX;
+		float gravY;
+		float gravZ;
+	}
+
+	struct TOUCH_STATE {
+		int t0Id;
+		int t1Id;
+		bool t0Down;
+		bool t1Down;
+		float t0X;
+		float t0Y;
+		float t1X;
+		float t1Y;
+	}
+}
 
 version(BindJSL_Static) {
 extern(C) @nogc nothrow:
+	// These are the best way to get all the buttons/triggers/sticks, gyro/accelerometer (IMU), orientation/acceleration/gravity (Motion), or touchpad
 	JOY_SHOCK_STATE JslGetSimpleState(int deviceId);
 	IMU_STATE JslGetIMUState(int deviceId);
 	int JslGetButtons(int deviceId);
-
+	version(JSLV2_0) {
+		MOTION_STATE JslGetMotionState(int deviceId);
+		TOUCH_STATE JslGetTouchState(int deviceId);
+	}
 	// get thumbsticks
 	float JslGetLeftX(int deviceId);
 	float JslGetLeftY(int deviceId);
@@ -190,6 +219,10 @@ extern(C) @nogc nothrow:
 		alias pJslSetLightColour = void function(int deviceId, int colour);
 		alias pJslSetRumble = void function(int deviceId, int smallRumble, int bigRumble);
 		alias pJslSetPlayerNumber = void function(int deviceId, int number);
+		version(JSLV2_0) {
+			alias pJslGetMotionState = MOTION_STATE function(int deviceId);
+			alias pJslGetTouchState = TOUCH_STATE function(int deviceId);
+		}
 	}
 	__gshared {
 		pJslGetSimpleState JslGetSimpleState;
@@ -215,12 +248,23 @@ extern(C) @nogc nothrow:
 		pJslPauseContinuousCalibration JslPauseContinuousCalibration;
 		pJslGetCalibrationOffset JslGetCalibrationOffset;
 		pJslSetCalibrationOffset JslSetCalibrationOffset;
+		/// this function will get called for each input event from each controller
 		pJslSetCallback JslSetCallback;
+		/// what kind of controller is this?
 		pJslGetControllerType JslGetControllerType;
+		/// is this a left, right, or full controller?
 		pJslGetControllerSplitType JslGetControllerSplitType;
+		/// what colour is the controller (not all controllers support this; those that don't will report white)
 		pJslGetControllerColour JslGetControllerColour;
+		/// set controller light colour (not all controllers have a light whose colour can be set, but that just means nothing will be done when this is called -- no harm)
 		pJslSetLightColour JslSetLightColour;
+		/// set controller rumble
 		pJslSetRumble JslSetRumble;
+		/// set controller player number indicator (not all controllers have a number indicator which can be set, but that just means nothing will be done when this is called -- no harm)
 		pJslSetPlayerNumber JslSetPlayerNumber;
+		version(JSLV2_0) {
+			pJslGetMotionState JslGetMotionState;
+			pJslGetTouchState JslGetTouchState;
+		}
 	}
 }

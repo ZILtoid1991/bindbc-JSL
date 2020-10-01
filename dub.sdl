@@ -32,4 +32,5 @@ buildType "unittest" {
     buildOptions "unittests" "debugMode" "debugInfo"
     sourceFiles "test.d"
     sourcePaths "source/"
+    versions "JSLV2_0"
 }
